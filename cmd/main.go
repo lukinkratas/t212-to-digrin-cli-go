@@ -58,7 +58,7 @@ func main() {
 
 	for {
 		
-		createdReportId = utils.CreateExport(fromDt, toDt)
+		createdReportId = utils.CreateReport(fromDt, toDt)
 
 		if createdReportId != 0 {
 			break

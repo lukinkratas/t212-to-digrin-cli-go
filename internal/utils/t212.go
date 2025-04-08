@@ -29,7 +29,7 @@ type Report struct {
 	DownloadLink string          `json:"downloadLink"`
 }
 
-func CreateExport(fromDt time.Time, toDt time.Time) uint {
+func CreateReport(fromDt time.Time, toDt time.Time) uint {
 
 	const url string = "https://live.trading212.com/api/v0/history/exports"
 
