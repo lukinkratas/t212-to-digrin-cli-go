@@ -26,3 +26,5 @@ go run main.py
 - [ ] add decorators or decorators like functionality
 
 - [ ] yield fetchReports ?
+
+- [ ] manage secrets via aws secrets
