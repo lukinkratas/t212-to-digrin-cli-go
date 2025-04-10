@@ -36,7 +36,7 @@ type CsvRecord struct {
 }
 
 
-func ReadCsv(csvEncoded []byte) []CsvRecord{
+func DecodeToDataFrame(csvEncoded []byte) []CsvRecord{
 
 	var csvRecords []CsvRecord
 
@@ -95,7 +95,7 @@ func TransformCsv(csvRecords []CsvRecord) []CsvRecord {
 	return csvRecords
 }
 
-func SaveCsv(csvRecords []CsvRecord, fileName string) {
+func WriteDataFrame(csvRecords []CsvRecord, fileName string) {
 
 	csvFile, err := os.Create(fileName)
 	if err != nil {
@@ -110,7 +110,7 @@ func SaveCsv(csvRecords []CsvRecord, fileName string) {
 
 }
 
-func EncodeCsv(csvRecords []CsvRecord) []byte {
+func EncodeDataFrame(csvRecords []CsvRecord) []byte {
 
 	csvEncoded, err := gocsv.MarshalBytes(csvRecords)
 	if err != nil {

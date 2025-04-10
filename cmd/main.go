@@ -122,13 +122,13 @@ func main() {
 	var keyName string = fmt.Sprintf("t212/%s", fileName)
 	utils.S3PutObject(t212CsvEncoded, bucketName, keyName)
 
-	var csvRecords []utils.CsvRecord = utils.ReadCsv(t212CsvEncoded)
+	var t212DataFrame []utils.CsvRecord = utils.DecodeToDataFrame(t212CsvEncoded)
 
-	csvRecords = utils.TransformCsv(csvRecords)
+	t212DataFrame = utils.TransformCsv(t212DataFrame)
 
-	utils.SaveCsv(csvRecords, fileName)
+	utils.WriteDataFrame(t212DataFrame, fileName)
 
-	var digrinCsvEncoded []byte = utils.EncodeCsv(csvRecords)
+	var digrinCsvEncoded []byte = utils.EncodeDataFrame(t212DataFrame)
 	keyName = fmt.Sprintf("digrin/%s", fileName)
 	utils.S3PutObject(digrinCsvEncoded, bucketName, keyName)
 
