@@ -14,19 +14,19 @@ import (
 )
 
 
-func GetInputDt() string {
+func GetInputDt() *string {
 
-	var currentDt time.Time = time.Now()
-	var previousMonthDt time.Time = currentDt.AddDate(0, -1, 0)
-	var previousMonthDtStr string = previousMonthDt.Format("2006-01")
+	// var currentDt time.Time = 
+	// var previousMonthDt time.Time = 
+	var previousMonthDtStr string = time.Now().AddDate(0, -1, 0).Format("2006-01")
 
-	var inputDtStr string
+	var inputDtStr *string = new(string)
 	fmt.Println("Reporting Year Month in \"YYYY-mm\" format: ")
 	fmt.Printf("Or confirm default \"%v\" by ENTER.\n", previousMonthDtStr)
-	fmt.Scanln(&inputDtStr)
+	fmt.Scanln(inputDtStr)
 
-	if inputDtStr == "" {
-		inputDtStr = previousMonthDtStr
+	if *inputDtStr == "" {
+		inputDtStr = &previousMonthDtStr
 	}
 
 	return inputDtStr
@@ -45,35 +45,36 @@ func main() {
 
 	t212Client := t212.APIClient{os.Getenv("T212_API_KEY")}
 
-	var inputDtStr string = GetInputDt()
+	var inputDtStr *string = GetInputDt()
 
-	var inputDt time.Time
-	inputDt, err = time.Parse("2006-01", inputDtStr)
-	if err != nil {
-		panic(err)
-	}
+	// var inputDt time.Time
+	// inputDt, err = time.Parse("2006-01", *inputDtStr)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	var fromDt time.Time = utils.GetFirstDayOfMonth(inputDt)
-	var toDt time.Time = utils.GetFirstDayOfNextMonth(inputDt)
+	// var fromDt time.Time = utils.GetFirstDayOfMonth(&inputDt)
+	// var toDt time.Time = utils.GetFirstDayOfNextMonth(&inputDt)
 
-	var createdReportId uint
+	// var createdReportId *uint 
 
-	for {
+	// for {
 		
-		createdReportId = t212Client.CreateReport(fromDt, toDt)
+	// 	createdReportId = t212Client.CreateReport(&fromDt, &toDt)
 
-		if createdReportId != 0 {
-			break
-		}
+	// 	if *createdReportId != 0 {
+	// 		break
+	// 	}
 
-		time.Sleep(10 * time.Second)
+	// 	time.Sleep(10 * time.Second)
 
-	}
+	// }
 	
-	// // createdReportId Mock Up
-	// createdReportId = 1594033
+	// createdReportId Mock Up
+	var createdReportId *uint = new(uint)
+	*createdReportId = 1695548
 
-	fmt.Printf("  createdReportId: %v\n", createdReportId)
+	fmt.Printf("  *createdReportId: %v\n", *createdReportId)
 
 	// optimized wait time for report creation
     time.Sleep(10 * time.Second)
@@ -89,18 +90,23 @@ func main() {
 			time.Sleep(10 * time.Second)
 			continue
 		}
+		
+		var startTime time.Time = time.Now()
 
 		// reverse order for loop, cause latest export is expected to be at the end
 		slices.Reverse(reportsList)
 
 		for _, report := range reportsList {
 
-			if report.Id == createdReportId {
+			if report.Id == *createdReportId {
 		        createdReport = report
 				break
 			}
 
 		}
+
+		fmt.Printf("  Took %v\n", time.Since(startTime))
+
 
 		if createdReport.Status == "Finished" {
 			break
@@ -115,18 +121,18 @@ func main() {
 
 	var t212CsvEncoded []byte = createdReport.Download()
 
-	var fileName string = fmt.Sprintf("%s.csv", inputDtStr)
+	var fileName string = fmt.Sprintf("%s.csv", *inputDtStr)
 
 	var keyName string = fmt.Sprintf("t212/%s", fileName)
-	utils.S3PutObject(t212CsvEncoded, bucketName, keyName)
+	utils.S3PutObject(t212CsvEncoded, &bucketName, &keyName)
 
 	var t212DataFrame []dataframe.Schema = dataframe.DecodeCSV(t212CsvEncoded)
 	t212DataFrame = dataframe.Transform(t212DataFrame)
 
 	var digrinCsvEncoded []byte = dataframe.Encode(t212DataFrame)
 	keyName = fmt.Sprintf("digrin/%s", fileName)
-	utils.S3PutObject(digrinCsvEncoded, bucketName, keyName)
-	var digrinCsvUrl string = utils.S3GetPresignedURL(bucketName, keyName)
-	fmt.Printf("  digrinCsvUrl: %v\n", digrinCsvUrl)
+	utils.S3PutObject(digrinCsvEncoded, &bucketName, &keyName)
+	var digrinCsvUrl *string = utils.S3GetPresignedURL(&bucketName, &keyName)
+	fmt.Printf("  *digrinCsvUrl: %v\n", *digrinCsvUrl)
 
 }

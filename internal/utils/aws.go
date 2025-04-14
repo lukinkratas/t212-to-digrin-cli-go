@@ -12,7 +12,7 @@ import (
 )
 
 
-func S3PutObject(fileEncoded []byte, bucketName string, keyName string) {
+func S3PutObject(fileEncoded []byte, bucketName *string, keyName *string) {
 
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(os.Getenv("AWS_REGION"))},
@@ -25,8 +25,8 @@ func S3PutObject(fileEncoded []byte, bucketName string, keyName string) {
 
 	// Upload input parameters
 	uploadParams := &s3manager.UploadInput{
-		Bucket: &bucketName,
-		Key:    &keyName,
+		Bucket: aws.String(*bucketName),
+		Key:    aws.String(*keyName),
 		Body:   bytes.NewReader(fileEncoded),
 	}
 
@@ -38,7 +38,7 @@ func S3PutObject(fileEncoded []byte, bucketName string, keyName string) {
 
 }
 
-func S3GetPresignedURL(bucketName string, keyName string) string {
+func S3GetPresignedURL(bucketName *string, keyName *string) *string {
 
     sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(os.Getenv("AWS_REGION"))},
@@ -51,8 +51,8 @@ func S3GetPresignedURL(bucketName string, keyName string) string {
     s3Clent := s3.New(sess)
 
 	requestParams := &s3.GetObjectInput{
-        Bucket: aws.String(bucketName),
-		Key:    aws.String(keyName),
+        Bucket: aws.String(*bucketName),
+		Key:    aws.String(*keyName),
     }
 
     req, _ := s3Clent.GetObjectRequest(requestParams)
@@ -61,5 +61,5 @@ func S3GetPresignedURL(bucketName string, keyName string) string {
         panic(err)
     }
 
-    return urlStr
+    return &urlStr
 }

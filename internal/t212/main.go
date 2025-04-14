@@ -32,7 +32,7 @@ type Report struct {
 	DownloadLink string          `json:"downloadLink"`
 }
 
-func (apiClient APIClient) CreateReport(fromDt time.Time, toDt time.Time) uint {
+func (apiClient APIClient) CreateReport(fromDt *time.Time, toDt *time.Time) *uint {
 
 	const url string = "https://live.trading212.com/api/v0/history/exports"
 
@@ -70,7 +70,7 @@ func (apiClient APIClient) CreateReport(fromDt time.Time, toDt time.Time) uint {
 	fmt.Printf("  Response Status: %v\n", response.Status)
 
 	if response.Status != "200 OK" {
-		return 0
+		return nil
 	}
 	
 	defer response.Body.Close()
@@ -85,7 +85,7 @@ func (apiClient APIClient) CreateReport(fromDt time.Time, toDt time.Time) uint {
 		panic(err)
 	}
 
-	return reponseBody.ReportId
+	return &reponseBody.ReportId
 }
 
 func (apiClient APIClient) ListReports() []Report {
