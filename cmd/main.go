@@ -9,6 +9,7 @@ import (
 	"github.com/joho/godotenv"
 	
 	"github.com/lukinkratas/t212-to-digrin-cli-go/internal/t212"
+	"github.com/lukinkratas/t212-to-digrin-cli-go/internal/dataframe"
 	"github.com/lukinkratas/t212-to-digrin-cli-go/internal/utils"
 )
 
@@ -77,7 +78,7 @@ func main() {
 	// optimized wait time for report creation
     time.Sleep(10 * time.Second)
 
-	var downloadLink string
+	var createdReport t212.Report
 
 	for {
 
@@ -88,9 +89,6 @@ func main() {
 			time.Sleep(10 * time.Second)
 			continue
 		}
-		
-		// if report list is not empty
-		var createdReport t212.Report
 
 		// reverse order for loop, cause latest export is expected to be at the end
 		slices.Reverse(reportsList)
@@ -113,7 +111,7 @@ func main() {
 	// // downloadLink Mock Up
 	// downloadLink = "https://tzswiy3zk5dms05cfeo.s3.eu-central-1.amazonaws.com/from_2025-03-01_to_2025-04-01_MTc0MzU4MDY0MDE0Mw.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20250402T075723Z&X-Amz-SignedHeaders=host&X-Amz-Expires=604799&X-Amz-Credential=AKIARJCCZCDEKCUWYOXG%2F20250402%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Signature=857a3b30cb532fdc0d52137a8af7602cbdfd84f597de0c74f61727403c71be3c"
 
-	fmt.Printf("  createdReport.downloadLink: %v\n", createdReport.downloadLink)
+	fmt.Printf("  createdReport.downloadLink: %v\n", createdReport.DownloadLink)
 
 	var t212CsvEncoded []byte = createdReport.Download()
 
@@ -122,10 +120,10 @@ func main() {
 	var keyName string = fmt.Sprintf("t212/%s", fileName)
 	utils.S3PutObject(t212CsvEncoded, bucketName, keyName)
 
-	var t212DataFrame []utils.Schema = utils.DecodeToDataFrame(t212CsvEncoded)
-	t212DataFrame = utils.TransformDataFrame(t212DataFrame)
+	var t212DataFrame []dataframe.Schema = dataframe.DecodeCSV(t212CsvEncoded)
+	t212DataFrame = dataframe.Transform(t212DataFrame)
 
-	var digrinCsvEncoded []byte = utils.EncodeDataFrame(t212DataFrame)
+	var digrinCsvEncoded []byte = dataframe.Encode(t212DataFrame)
 	keyName = fmt.Sprintf("digrin/%s", fileName)
 	utils.S3PutObject(digrinCsvEncoded, bucketName, keyName)
 	var digrinCsvUrl string = utils.S3GetPresignedURL(bucketName, keyName)

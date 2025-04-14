@@ -1,4 +1,4 @@
-package utils
+package t212
 
 import (
 	"fmt"
@@ -125,7 +125,7 @@ func (apiClient APIClient) ListReports() []Report {
 }
 
 
-func (report Report) DownloadReport() []byte {
+func (report Report) Download() []byte {
 
 	req, err := http.NewRequest("GET", report.DownloadLink, nil)
 	if err != nil {

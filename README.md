@@ -39,12 +39,12 @@ Golang CLI tool for fetching T212 reports via API call and transforming them to 
 
 - [ ] add send mail instead of storing locally
 
-- [ ] T212 API Client Struct
+- [x] T212 API Client Struct
 
 - [ ] DataFrame generic Schema
 
 - [ ] manage secrets via cloud
 
-- [ ] parametrize struct in dataframe utils
+- [ ] parametrize struct in dataframe utils + dataframe struct
 
 - [ ] add tests for dataframe and time

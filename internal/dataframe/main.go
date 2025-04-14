@@ -1,7 +1,6 @@
-package utils
+package dataframe
 
 import (
-	"os"
 	"slices"
 
 	"github.com/gocarina/gocsv"
@@ -35,8 +34,7 @@ type Schema struct {
 	CurrencyFrenchTransactionTax         string  `csv:"Currency (French transaction tax)"`
 }
 
-
-func DecodeToDataFrame(csvEncoded []byte) []Schema {
+func DecodeCSV(csvEncoded []byte) []Schema {
 
 	var dataFrame []Schema
 
@@ -48,7 +46,7 @@ func DecodeToDataFrame(csvEncoded []byte) []Schema {
 	return dataFrame
 }
 
-func TransformDataFrame(dataFrame []Schema) []Schema {
+func Transform(dataFrame []Schema) []Schema {
 
 	// Filter out blacklisted tickers
 	tickerBlacklist := []string{
@@ -95,22 +93,7 @@ func TransformDataFrame(dataFrame []Schema) []Schema {
 	return dataFrame
 }
 
-func WriteDataFrame(dataFrame []Schema, fileName string) {
-
-	csvFile, err := os.Create(fileName)
-	if err != nil {
-		panic(err)
-	}
-	defer csvFile.Close()
-
-	err = gocsv.MarshalFile(&dataFrame, csvFile)
-	if err != nil {
-		panic(err)
-	}
-
-}
-
-func EncodeDataFrame(dataFrame []Schema) []byte {
+func Encode(dataFrame []Schema) []byte {
 
 	csvEncoded, err := gocsv.MarshalBytes(dataFrame)
 	if err != nil {
