@@ -81,11 +81,11 @@ func Transform(dataFrame []Schema) []Schema {
         "NDIA": "NDIA.L",
 	}
 
-	for _, dataFrameRow := range dataFrame {
+	for _, row := range dataFrame {
 
-		tickerSubstitute, ok := tickerMap[dataFrameRow.Ticker]
+		tickerSubstitute, ok := tickerMap[row.Ticker]
 		if ok {
-			dataFrameRow.Ticker = tickerSubstitute
+			row.Ticker = tickerSubstitute
 		}
 
 	}
