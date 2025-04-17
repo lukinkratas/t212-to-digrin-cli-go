@@ -32,7 +32,7 @@ type Report struct {
 	DownloadLink string          `json:"downloadLink"`
 }
 
-func (apiClient APIClient) CreateReport(fromDt *time.Time, toDt *time.Time) *uint {
+func (ac APIClient) CreateReport(fromDt *time.Time, toDt *time.Time) *uint {
 
 	const url string = "https://live.trading212.com/api/v0/history/exports"
 
@@ -60,7 +60,7 @@ func (apiClient APIClient) CreateReport(fromDt *time.Time, toDt *time.Time) *uin
 	}
 
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", apiClient.Key)
+	req.Header.Add("Authorization", ac.Key)
 
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -88,7 +88,7 @@ func (apiClient APIClient) CreateReport(fromDt *time.Time, toDt *time.Time) *uin
 	return &reponseBody.ReportId
 }
 
-func (apiClient APIClient) ListReports() []Report {
+func (ac APIClient) ListReports() []Report {
 
 	const url string = "https://live.trading212.com/api/v0/history/exports"
 
@@ -97,7 +97,7 @@ func (apiClient APIClient) ListReports() []Report {
 		panic(err)
 	}
 
-	req.Header.Add("Authorization", apiClient.Key)
+	req.Header.Add("Authorization", ac.Key)
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
 		panic(err)
@@ -125,9 +125,9 @@ func (apiClient APIClient) ListReports() []Report {
 }
 
 
-func (report Report) Download() []byte {
+func (r Report) Download() []byte {
 
-	req, err := http.NewRequest("GET", report.DownloadLink, nil)
+	req, err := http.NewRequest("GET", r.DownloadLink, nil)
 	if err != nil {
 		panic(err)
 	}
